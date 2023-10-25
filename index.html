@@ -43,7 +43,7 @@ function initialize()
 	ambientLight.castShadow = false
 	scene.add( ambientLight );
 				
-	camera = new THREE.Camera();
+	camera = new THREE.PerspectiveCamera();
 	scene.add(camera);
 
 	renderer = new THREE.WebGLRenderer({
@@ -73,6 +73,9 @@ function initialize()
 
 	function onResize()
 	{
+		camera.aspect = window.innerWidth / window.innerHeight
+		camera.updateProjectionMatrix()
+		renderer?.setSize(window.innerWidth, window.innerHeight)
 		arToolkitSource.onResize()	
 		arToolkitSource.copySizeTo(renderer.domElement)	
 		if ( arToolkitContext.arController !== null )
