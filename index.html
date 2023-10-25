@@ -51,7 +51,7 @@ function initialize()
 		alpha: true,
 		premultipliedAlpha: true,
 	});
-	// renderer.setPixelRatio(window.devicePixelRatio / 2)
+	renderer.setPixelRatio(window.devicePixelRatio)
 	renderer.setClearColor(new THREE.Color('black'), 0)
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	renderer.domElement.style.position = 'absolute'
