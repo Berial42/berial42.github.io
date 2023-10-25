@@ -46,11 +46,11 @@ function initialize()
 	scene.add(camera);
 
 	renderer = new THREE.WebGLRenderer({
-		antialias : true,
-		alpha: true
+		antialias : true
 	});
+	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
-	renderer.setSize( 640, 480 );
+	renderer.setSize( window.innerWidth, window.innerHeight );
 	renderer.domElement.style.position = 'absolute'
 	renderer.domElement.style.top = '0px'
 	renderer.domElement.style.left = '0px'
@@ -82,16 +82,10 @@ function initialize()
 		onResize()
 	});
 	
-	// handle resize event
 	window.addEventListener('resize', function(){
 		onResize()
 	});
-	
-	////////////////////////////////////////////////////////////
-	// setup arToolkitContext
-	////////////////////////////////////////////////////////////	
 
-	// create atToolkitContext
 	arToolkitContext = new THREEx.ArToolkitContext({
 		cameraParametersUrl: 'data/camera_para.dat',
 		detectionMode: 'mono'
@@ -134,32 +128,27 @@ function initialize()
 		animate();
 
 	}, undefined, function ( e ) {
-
 		console.error( e );
-
 	} );
 }
 
-
 function update()
 {
-	// update artoolkit on every frame
 	if ( arToolkitSource.ready !== false )
 		arToolkitContext.update( arToolkitSource.domElement );
 }
-
 
 function render()
 {
 	renderer.render( scene, camera );
 }
 
-
 function animate()
 {
 	requestAnimationFrame(animate);
 	deltaTime = clock.getDelta();
-	mixer.update(deltaTime)
+	if(mixer)
+		mixer.update(deltaTime)
 	totalTime += deltaTime;
 	update();
 	render();
