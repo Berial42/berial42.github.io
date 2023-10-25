@@ -40,16 +40,19 @@ function initialize()
 	scene = new THREE.Scene();
 
 	let ambientLight = new THREE.AmbientLight( 0xcccccc, 0.5 );
+	ambientLight.castShadow = false
 	scene.add( ambientLight );
 				
 	camera = new THREE.Camera();
 	scene.add(camera);
 
 	renderer = new THREE.WebGLRenderer({
-		antialias : true
+		antialias : true,
+		alpha: true,
+		premultipliedAlpha: true,
 	});
-	renderer.setPixelRatio( window.devicePixelRatio );
-	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
+	// renderer.setPixelRatio(window.devicePixelRatio / 2)
+	renderer.setClearColor(new THREE.Color('black'), 0)
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	renderer.domElement.style.position = 'absolute'
 	renderer.domElement.style.top = '0px'
@@ -82,10 +85,16 @@ function initialize()
 		onResize()
 	});
 	
+	// handle resize event
 	window.addEventListener('resize', function(){
 		onResize()
 	});
+	
+	////////////////////////////////////////////////////////////
+	// setup arToolkitContext
+	////////////////////////////////////////////////////////////	
 
+	// create atToolkitContext
 	arToolkitContext = new THREEx.ArToolkitContext({
 		cameraParametersUrl: 'data/camera_para.dat',
 		detectionMode: 'mono'
@@ -115,11 +124,13 @@ function initialize()
 	loader.load( 'models/LittlestTokyo.glb', function ( gltf ) {
 
 		const model = gltf.scene;
-		model.position.set( 0, 0, 0 );
+		model.position.set(0.2, 0.2, 0);
 		model.scale.set( 0.0025, 0.0025, 0.0025 );
+		model.renderOrder = 1
 		markerRoot1.add( model );
 		const directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
 		directionalLight.position.set( 1, 2, 1 );
+		directionalLight.castShadow = false
 		directionalLight.target = model
 		model.add(directionalLight)
 		mixer = new THREE.AnimationMixer( model );
@@ -132,11 +143,13 @@ function initialize()
 	} );
 }
 
+
 function update()
 {
 	if ( arToolkitSource.ready !== false )
 		arToolkitContext.update( arToolkitSource.domElement );
 }
+
 
 function render()
 {
