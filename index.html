@@ -32,6 +32,10 @@ var markerRoot1, markerRoot2;
 var mesh1;
 var mixer;
 
+const fieldOfView = 60
+const near = 0.1
+const far = 10000
+
 initialize();
 animate();
 
@@ -43,7 +47,8 @@ function initialize()
 	ambientLight.castShadow = false
 	scene.add( ambientLight );
 				
-	camera = new THREE.PerspectiveCamera();
+	camera = new THREE.PerspectiveCamera(
+	);
 	scene.add(camera);
 
 	renderer = new THREE.WebGLRenderer({
@@ -73,15 +78,16 @@ function initialize()
 
 	function onResize()
 	{
-		camera.aspect = window.innerWidth / window.innerHeight
-		camera.updateProjectionMatrix()
+		// camera.aspect = window.innerHeight / window.innerWidth
 		renderer?.setSize(window.innerWidth, window.innerHeight)
-		arToolkitSource.onResize()	
-		arToolkitSource.copySizeTo(renderer.domElement)	
+		arToolkitSource.onResizeElement()	
+		arToolkitSource.copyElementSizeTo(renderer.domElement)	
 		if ( arToolkitContext.arController !== null )
 		{
-			arToolkitSource.copySizeTo(arToolkitContext.arController.canvas)	
+			arToolkitSource.copyElementSizeTo(arToolkitContext.arController.canvas)	
 		}	
+		camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
+		camera.updateProjectionMatrix()
 	}
 
 	arToolkitSource.init(function onReady(){
@@ -106,6 +112,7 @@ function initialize()
 	// copy projection matrix to camera when initialization complete
 	arToolkitContext.init( function onCompleted(){
 		camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
+		camera.updateProjectionMatrix()
 	});
 
 	////////////////////////////////////////////////////////////
@@ -146,13 +153,11 @@ function initialize()
 	} );
 }
 
-
 function update()
 {
 	if ( arToolkitSource.ready !== false )
 		arToolkitContext.update( arToolkitSource.domElement );
 }
-
 
 function render()
 {
