@@ -119,7 +119,7 @@ function initialize()
 		const model = gltf.scene;
 		model.position.set( 1, 1, 0 );
 		model.scale.set( 0.01, 0.01, 0.01 );
-		scene.add( model );
+		markerRoot1.add( model );
 
 		mixer = new THREE.AnimationMixer( model );
 		mixer.clipAction( gltf.animations[ 0 ] ).play();
@@ -133,17 +133,17 @@ function initialize()
 	} );
 
 
-	let geometry1	= new THREE.CubeGeometry(1,1,1);
-	let material1	= new THREE.MeshNormalMaterial({
-		transparent: true,
-		opacity: 0.5,
-		side: THREE.DoubleSide
-	}); 
+	// let geometry1	= new THREE.CubeGeometry(1,1,1);
+	// let material1	= new THREE.MeshNormalMaterial({
+	// 	transparent: true,
+	// 	opacity: 0.5,
+	// 	side: THREE.DoubleSide
+	// }); 
 	
-	mesh1 = new THREE.Mesh( geometry1, material1 );
-	mesh1.position.y = 0.5;
+	// mesh1 = new THREE.Mesh( geometry1, material1 );
+	// mesh1.position.y = 0.5;
 	
-	markerRoot1.add( mesh1 );
+	// markerRoot1.add( mesh1 );
 }
 
 
