@@ -55,6 +55,8 @@ function initialize()
 	renderer.domElement.style.left = '0px'
 	document.body.appendChild( renderer.domElement );
 
+	let mixer;
+
 	clock = new THREE.Clock();
 	deltaTime = 0;
 	totalTime = 0;
@@ -123,7 +125,8 @@ function initialize()
 		model.position.set( 0, 0, 0 );
 		model.scale.set( 0.0025, 0.0025, 0.0025 );
 		markerRoot1.add( model );
-
+		const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+		model.add(directionalLight)
 		mixer = new THREE.AnimationMixer( model );
 		mixer.clipAction( gltf.animations[ 0 ] ).play();
 
@@ -134,19 +137,6 @@ function initialize()
 		console.error( e );
 
 	} );
-
-
-	// let geometry1	= new THREE.CubeGeometry(1,1,1);
-	// let material1	= new THREE.MeshNormalMaterial({
-	// 	transparent: true,
-	// 	opacity: 0.5,
-	// 	side: THREE.DoubleSide
-	// }); 
-	
-	// mesh1 = new THREE.Mesh( geometry1, material1 );
-	// mesh1.position.y = 0.5;
-	
-	// markerRoot1.add( mesh1 );
 }
 
 
@@ -168,6 +158,7 @@ function animate()
 {
 	requestAnimationFrame(animate);
 	deltaTime = clock.getDelta();
+	mixer.update(deltaTime)
 	totalTime += deltaTime;
 	update();
 	render();
