@@ -30,6 +30,7 @@ var arToolkitSource, arToolkitContext;
 var markerRoot1, markerRoot2;
 
 var mesh1;
+var mixer;
 
 initialize();
 animate();
@@ -54,8 +55,6 @@ function initialize()
 	renderer.domElement.style.top = '0px'
 	renderer.domElement.style.left = '0px'
 	document.body.appendChild( renderer.domElement );
-
-	let mixer;
 
 	clock = new THREE.Clock();
 	deltaTime = 0;
