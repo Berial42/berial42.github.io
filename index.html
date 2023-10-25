@@ -124,7 +124,7 @@ function initialize()
 		model.position.set( 0, 0, 0 );
 		model.scale.set( 0.0025, 0.0025, 0.0025 );
 		markerRoot1.add( model );
-		const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+		const directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
 		model.add(directionalLight)
 		mixer = new THREE.AnimationMixer( model );
 		mixer.clipAction( gltf.animations[ 0 ] ).play();
