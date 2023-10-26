@@ -4,13 +4,15 @@
 	<title>Hello, AR Cube!</title>
 	<!-- include jsartookit -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r126/three.min.js" integrity="sha512-n8IpKWzDnBOcBhRlHirMZOUvEq2bLRMuJGjuVqbzUJwtTsgwOgK5aS0c1JA647XWYfqvXve8k3PtZdzpipFjgg==" crossorigin="anonymous"></script>
-	<script src="jsartoolkit5/artoolkit.min.js"></script>
-	<script src="jsartoolkit5/artoolkit.api.js"></script>
+	<!-- <script src="jsartoolkit5/artoolkit.min.js"></script>
+	<script src="jsartoolkit5/artoolkit.api.js"></script> -->
+	<script src="js/ar-nft.js"></script>
 	<!-- include threex.artoolkit -->
-	<script src="threex/threex-artoolkitsource.js"></script>
+	<!-- <script src="threex/threex-artoolkitsource.js"></script>
 	<script src="threex/threex-artoolkitcontext.js"></script>
 	<script src="threex/threex-arbasecontrols.js"></script>
-	<script src="threex/threex-armarkercontrols.js"></script>
+	<script src="threex/threex-armarkercontrols.js"></script> -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.min.js"></script>
 	<script src="https://unpkg.com/three@0.126.0/examples/js/loaders/GLTFLoader.js"></script>
 	<script src="https://unpkg.com/three@0.126.0/examples/js/loaders/DRACOLoader.js"></script>
 </head>
@@ -36,6 +38,11 @@ const fieldOfView = 60
 const near = 0.1
 const far = 10000
 
+let width  = 640;
+let height = 480;
+let windowWidth  = window.innerWidth;
+let windowHeight = window.innerHeight;
+
 initialize();
 animate();
 
@@ -54,10 +61,10 @@ function initialize()
 	renderer = new THREE.WebGLRenderer({
 		antialias : true,
 		alpha: true,
-		premultipliedAlpha: true,
+		precision: 'mediump',
 	});
 	renderer.setPixelRatio(window.devicePixelRatio)
-	renderer.setClearColor(new THREE.Color('black'), 0)
+	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	renderer.domElement.style.position = 'absolute'
 	renderer.domElement.style.top = '0px'
@@ -67,31 +74,38 @@ function initialize()
 	clock = new THREE.Clock();
 	deltaTime = 0;
 	totalTime = 0;
-	
-	////////////////////////////////////////////////////////////
-	// setup arToolkitSource
-	////////////////////////////////////////////////////////////
 
 	arToolkitSource = new THREEx.ArToolkitSource({
 		sourceType : 'webcam',
+		sourceWidth: width,
+        sourceHeight: height,
 	});
 
 	function onResize()
 	{
-		// camera.aspect = window.innerHeight / window.innerWidth
-		renderer?.setSize(window.innerWidth, window.innerHeight)
-		arToolkitSource.onResizeElement()	
-		arToolkitSource.copyElementSizeTo(renderer.domElement)	
-		if ( arToolkitContext.arController !== null )
-		{
-			arToolkitSource.copyElementSizeTo(arToolkitContext.arController.canvas)	
-		}	
-		camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
-		camera.updateProjectionMatrix()
+		console.log("onResize...")
+        console.log("window-size:", windowWidth, windowHeight);
+        console.log("window-inner-size:", window.innerWidth, window.innerHeight);
+
+        // Update renderer size
+        windowWidth  = window.innerWidth;
+        windowHeight = window.innerHeight;
+        console.log("window-size:", windowWidth, windowHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(windowWidth, windowHeight);
+        
+        arToolkitSource.onResizeElement()
+        arToolkitSource.copyElementSizeTo(renderer.domElement)
+        if( arToolkitContext.arController !== null ){
+            arToolkitSource.copyElementSizeTo(arToolkitContext.arController.canvas)
+        }
 	}
 
 	arToolkitSource.init(function onReady(){
-		onResize()
+		console.log("use a resize to fullscreen mobile devices...");
+        setTimeout(function() {
+            onResize();
+        }, 100);
 	});
 	
 	// handle resize event
@@ -105,8 +119,9 @@ function initialize()
 
 	// create atToolkitContext
 	arToolkitContext = new THREEx.ArToolkitContext({
-		cameraParametersUrl: 'data/camera_para.dat',
-		detectionMode: 'mono'
+		detectionMode: 'mono',
+		canvasWidth: width,
+        canvasHeight: height,
 	});
 	
 	// copy projection matrix to camera when initialization complete
@@ -119,34 +134,47 @@ function initialize()
 	// setup markerRoots
 	////////////////////////////////////////////////////////////
 
-	// build markerControls
-	markerRoot1 = new THREE.Group();
-	scene.add(markerRoot1);
-	let markerControls1 = new THREEx.ArMarkerControls(arToolkitContext, markerRoot1, {
-		type: 'pattern', patternUrl: "data/hiro.patt",
-	})
+	let nftName = "ramen-1000px";
+    //let nftUrl  = "../resources/nft/" + nftName; // for local test
+    let nftUrl  = "https://followthedarkside.github.io/arjs-image-tracking-sample/resources/nft/" + nftName;//"./resources/nft/" + nftName;
+	console.log(nftUrl);
 
+	// build markerControls
+	
 	const dracoLoader = new THREE.DRACOLoader();
 	dracoLoader.setDecoderPath( 'jsm/libs/draco/gltf/' );
-
+	
 	const loader = new THREE.GLTFLoader();
 	loader.setDRACOLoader( dracoLoader );
 	loader.load( 'models/LittlestTokyo.glb', function ( gltf ) {
-
-		const model = gltf.scene;
-		model.position.set(0.2, 0.2, 0);
-		model.scale.set( 0.0025, 0.0025, 0.0025 );
-		model.renderOrder = 1
-		markerRoot1.add( model );
+		
+		markerRoot1 = gltf.scene;
+		markerRoot1.children[0].position.set(0, 0, 0);
+		markerRoot1.scale.set( 1, 1, 1);
+		scene.attach( markerRoot1 );
+		markerRoot1.renderOrder = 1
 		const directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
 		directionalLight.position.set( 1, 2, 1 );
 		directionalLight.castShadow = false
-		directionalLight.target = model
-		model.add(directionalLight)
-		mixer = new THREE.AnimationMixer( model );
+		directionalLight.target = markerRoot1
+		markerRoot1.add(directionalLight)
+		mixer = new THREE.AnimationMixer( markerRoot1 );
 		mixer.clipAction( gltf.animations[ 0 ] ).play();
-
+		
 		animate();
+		let markerControls1 = new THREEx.ArMarkerControls(arToolkitContext, markerRoot1, {
+			type: 'nft',
+			descriptorsUrl : nftUrl,
+			smooth: true,
+			smoothCount:5,
+			smoothToleranc: 0.01,
+			// type: 'pattern', patternUrl: "data/hiro.patt",
+			// changeMatrixMode: 'cameraTransformMatrix'
+		})
+	
+		markerControls1.addEventListener("markerFound", function(ev){
+			console.log(scene);
+		})
 
 	}, undefined, function ( e ) {
 		console.error( e );
@@ -168,13 +196,15 @@ function animate()
 {
 	requestAnimationFrame(animate);
 	deltaTime = clock.getDelta();
-	if(mixer)
+	if(mixer){
 		mixer.update(deltaTime)
+	}
+
 	totalTime += deltaTime;
 	update();
+	// scene.visible = camera.visible;
 	render();
 }
-
 </script>
 
 </body>
