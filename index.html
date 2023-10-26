@@ -134,8 +134,10 @@ function initialize()
 	// setup markerRoots
 	////////////////////////////////////////////////////////////
 
-	let nftName = "paris-1000";
-    let nftUrl  = "https://berial42.github.io/resources/nft/" + nftName;
+	// let nftName = "paris-1000";
+	let nftName = "ramen-1000px";
+	let nftUrl  = "https://followthedarkside.github.io/arjs-image-tracking-sample/resources/nft/" + nftName;
+    // let nftUrl  = "https://berial42.github.io/resources/nft/" + nftName;
 	console.log(nftUrl);
 
 	// build markerControls
@@ -148,7 +150,7 @@ function initialize()
 	loader.load( 'models/LittlestTokyo.glb', function ( gltf ) {
 		
 		markerRoot1 = gltf.scene;
-		markerRoot1.children[0].position.set(220, 100, -170);
+		markerRoot1.children[0].position.set(220, 0, -170);
 		markerRoot1.children[0].scale.set( 0.6,0.8,0.6);
 		scene.add( markerRoot1 );
 		markerRoot1.renderOrder = 1
