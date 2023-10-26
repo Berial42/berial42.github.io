@@ -77,8 +77,8 @@ function initialize()
 
 	arToolkitSource = new THREEx.ArToolkitSource({
 		sourceType : 'webcam',
-		sourceWidth: width,
-        sourceHeight: height,
+		sourceWidth: windowWidth,
+        sourceHeight: windowHeight,
 	});
 
 	function onResize()
@@ -120,8 +120,8 @@ function initialize()
 	// create atToolkitContext
 	arToolkitContext = new THREEx.ArToolkitContext({
 		detectionMode: 'mono',
-		canvasWidth: width,
-        canvasHeight: height,
+		canvasWidth: windowWidth,
+        canvasHeight: windowHeight,
 	});
 	
 	// copy projection matrix to camera when initialization complete
@@ -134,10 +134,10 @@ function initialize()
 	// setup markerRoots
 	////////////////////////////////////////////////////////////
 
-	// let nftName = "paris-1000";
-	let nftName = "ramen-1000px";
-	let nftUrl  = "https://followthedarkside.github.io/arjs-image-tracking-sample/resources/nft/" + nftName;
-    // let nftUrl  = "https://berial42.github.io/resources/nft/" + nftName;
+	// let nftName = "ramen-1000px";
+	// let nftUrl  = "https://followthedarkside.github.io/arjs-image-tracking-sample/resources/nft/" + nftName;
+	let nftName = "paris-1000";
+    let nftUrl  = "https://berial42.github.io/resources/nft/" + nftName;
 	console.log(nftUrl);
 
 	// build markerControls
@@ -150,7 +150,7 @@ function initialize()
 	loader.load( 'models/LittlestTokyo.glb', function ( gltf ) {
 		
 		markerRoot1 = gltf.scene;
-		markerRoot1.children[0].position.set(220, 0, -170);
+		markerRoot1.children[0].position.set(220, 100, -170);
 		markerRoot1.children[0].scale.set( 0.6,0.8,0.6);
 		scene.add( markerRoot1 );
 		markerRoot1.renderOrder = 1
@@ -163,14 +163,14 @@ function initialize()
 		mixer.clipAction( gltf.animations[ 0 ] ).play();
 		
 		animate();
-		let markerControls1 = new THREEx.ArMarkerControls(arToolkitContext, camera, {
+		let markerControls1 = new THREEx.ArMarkerControls(arToolkitContext, markerRoot1, {
 			type: 'nft',
 			descriptorsUrl : nftUrl,
 			smooth: true,
 			smoothCount:20,
-			smoothToleranc: 0.01,
+			smoothToleranc: 0.05,
 			// type: 'pattern', patternUrl: "data/hiro.patt",
-			changeMatrixMode: 'cameraTransformMatrix'
+			// changeMatrixMode: 'cameraTransformMatrix'
 		})
 	
 		markerControls1.addEventListener("markerFound", function(ev){
