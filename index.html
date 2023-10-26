@@ -161,14 +161,14 @@ function initialize()
 		mixer.clipAction( gltf.animations[ 0 ] ).play();
 		
 		animate();
-		let markerControls1 = new THREEx.ArMarkerControls(arToolkitContext, markerRoot1, {
+		let markerControls1 = new THREEx.ArMarkerControls(arToolkitContext, camera, {
 			type: 'nft',
 			descriptorsUrl : nftUrl,
 			smooth: true,
-			smoothCount:5,
+			smoothCount:20,
 			smoothToleranc: 0.01,
 			// type: 'pattern', patternUrl: "data/hiro.patt",
-			// changeMatrixMode: 'cameraTransformMatrix'
+			changeMatrixMode: 'cameraTransformMatrix'
 		})
 	
 		markerControls1.addEventListener("markerFound", function(ev){
