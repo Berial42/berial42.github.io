@@ -77,8 +77,8 @@ function initialize()
 
 	arToolkitSource = new THREEx.ArToolkitSource({
 		sourceType : 'webcam',
-		sourceWidth: windowWidth,
-        sourceHeight: windowHeight,
+		sourceWidth: width,
+        sourceHeight: height,
 	});
 
 	function onResize()
@@ -119,9 +119,9 @@ function initialize()
 
 	// create atToolkitContext
 	arToolkitContext = new THREEx.ArToolkitContext({
-		detectionMode: 'mono',
-		canvasWidth: windowWidth,
-        canvasHeight: windowHeight,
+		detectionMode: 'mono_and_matrix',
+		canvasWidth: width,
+        canvasHeight: height,
 	});
 	
 	// copy projection matrix to camera when initialization complete
@@ -136,7 +136,7 @@ function initialize()
 
 	// let nftName = "ramen-1000px";
 	// let nftUrl  = "https://followthedarkside.github.io/arjs-image-tracking-sample/resources/nft/" + nftName;
-	let nftName = "paris-1000";
+	let nftName = "paris-1000px";
     let nftUrl  = "https://berial42.github.io/resources/nft/" + nftName;
 	console.log(nftUrl);
 
@@ -150,8 +150,8 @@ function initialize()
 	loader.load( 'models/LittlestTokyo.glb', function ( gltf ) {
 		
 		markerRoot1 = gltf.scene;
-		markerRoot1.children[0].position.set(220, 100, -170);
-		markerRoot1.children[0].scale.set( 0.6,0.8,0.6);
+		markerRoot1.children[0].position.set(width * 0.6 / 2, 100, -height * 0.6 / 2);
+		markerRoot1.children[0].scale.set( 0.6,0.6,0.6);
 		scene.add( markerRoot1 );
 		markerRoot1.renderOrder = 1
 		const directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
