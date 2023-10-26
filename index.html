@@ -148,9 +148,9 @@ function initialize()
 	loader.load( 'models/LittlestTokyo.glb', function ( gltf ) {
 		
 		markerRoot1 = gltf.scene;
-		markerRoot1.children[0].position.set(0, 0, 0);
-		markerRoot1.scale.set( 1, 1, 1);
-		scene.attach( markerRoot1 );
+		markerRoot1.children[0].position.set(220, 100, -170);
+		markerRoot1.children[0].scale.set( 0.6,0.8,0.6);
+		scene.add( markerRoot1 );
 		markerRoot1.renderOrder = 1
 		const directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
 		directionalLight.position.set( 1, 2, 1 );
@@ -201,7 +201,7 @@ function animate()
 
 	totalTime += deltaTime;
 	update();
-	// scene.visible = camera.visible;
+	scene.visible = camera.visible;
 	render();
 }
 </script>
