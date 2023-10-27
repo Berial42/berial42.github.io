@@ -174,6 +174,8 @@ function initialize()
 		markerRoot1.add(directionalLight)
 		mixer = new THREE.AnimationMixer( markerRoot1 );
 		mixer.clipAction( gltf.animations[ 0 ] ).play();
+
+		console.log("loaded model");
 		
 		animate();
 		let markerControls1 = new THREEx.ArMarkerControls(arToolkitContext, markerRoot1, {
