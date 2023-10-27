@@ -161,7 +161,7 @@ function initialize()
 	
 	const loader = new THREE.GLTFLoader();
 	loader.setDRACOLoader( dracoLoader );
-	loader.load( 'models/LittlestTokyo.gltf', function ( gltf ) {		
+	loader.load( 'models/LittlestTokyo.glb', function ( gltf ) {		
 		markerRoot1 = gltf.scene;
 		markerRoot1.children[0].position.set(150, 0, -150);
 		markerRoot1.children[0].scale.set( 0.6,0.6,0.6);
