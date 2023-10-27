@@ -272,10 +272,10 @@ function animate()
 	
 		var arToolkitSource = new THREEx.ArToolkitSource({
 			sourceType: 'webcam',
-			sourceWidth: window.innerWidth,
-			sourceHeight: window.innerHeight,
-			displayWidth: window.innerWidth,
-			displayHeight: window.innerHeight,
+			sourceWidth: window.innerHeight,
+			sourceHeight: window.innerWidth,
+			displayWidth: window.innerHeight,
+			displayHeight: window.innerWidth,
 		});
 	
 		arToolkitSource.init(function onReady() {
