@@ -243,7 +243,7 @@ function animate()
 
 	<script>
 		var scene = new THREE.Scene();
-		var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
+		var camera = new THREE.PerspectiveCamera();
 		var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, logarithmicDepthBuffer:true });
 		renderer.setSize(window.innerWidth, window.innerHeight);
 		document.body.appendChild(renderer.domElement);
