@@ -256,7 +256,7 @@ function animate()
 		scene.add(marker);
 		loader.load('models/LilCity.gltf', function (gltf) {
 			model = gltf.scene;
-			model.children[0].position.set(0, 0, 0);
+			model.children[0].position.set(250, 0, -250);
 			model.children[0].scale.set( 0.4,0.4,0.4);
 			if (gltf.animations && gltf.animations.length) {
 				mixer = new THREE.AnimationMixer(gltf.scene);
