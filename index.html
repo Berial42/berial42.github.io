@@ -257,7 +257,7 @@ function animate()
 		loader.load('models/LittlestTokyo.gltf', function (gltf) {
 			model = gltf.scene;
 			model.children[0].position.set(0, 0, 0);
-			model.children[0].scale.set( 0.8,0.8,0.8);
+			model.children[0].scale.set( 0.4,0.4,0.4);
 			if (gltf.animations && gltf.animations.length) {
 				mixer = new THREE.AnimationMixer(gltf.scene);
 				mixer.clipAction(gltf.animations[0]).play();
@@ -287,8 +287,8 @@ function animate()
 			let windowWidth  = window.innerWidth;
 			let windowHeight = window.innerHeight;
 			console.log("window-size:", windowWidth, windowHeight);
-			renderer.setPixelRatio(window.devicePixelRatio);
-			renderer.setSize(windowWidth, windowHeight);
+			// renderer.setPixelRatio(window.devicePixelRatio);
+			// renderer.setSize(windowWidth, windowHeight);
 
 			arToolkitSource.onResize();
 			arToolkitSource.copySizeTo(renderer.domElement);
