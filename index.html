@@ -155,6 +155,21 @@ function initialize()
 	console.log(nftUrl);
 
 	// build markerControls
+	markerRoot1 = new THREE.Group()
+	scene.add(markerRoot1)
+	let markerControls1 = new THREEx.ArMarkerControls(arToolkitContext, markerRoot1, {
+		type: 'nft',
+		descriptorsUrl : nftUrl,
+		smooth: true,
+		smoothCount:20,
+		smoothToleranc: 0.05,
+		// type: 'pattern', patternUrl: "data/hiro.patt",
+		// changeMatrixMode: 'cameraTransformMatrix'
+	})
+
+	markerControls1.addEventListener("markerFound", function(ev){
+		console.log("detected......");
+	})
 	
 	const dracoLoader = new THREE.DRACOLoader();
 	dracoLoader.setDecoderPath( 'jsm/libs/draco/gltf/' );
@@ -162,35 +177,23 @@ function initialize()
 	const loader = new THREE.GLTFLoader();
 	loader.setDRACOLoader( dracoLoader );
 	loader.load( 'models/LittlestTokyo.glb', function ( gltf ) {		
-		markerRoot1 = gltf.scene;
-		markerRoot1.children[0].position.set(150, 0, -150);
-		markerRoot1.children[0].scale.set( 0.6,0.6,0.6);
-		scene.add( markerRoot1 );
-		markerRoot1.renderOrder = 1
+		let model = gltf.scene;
+		model.children[0].position.set(150, 0, -150);
+		model.children[0].scale.set( 0.6,0.6,0.6);
+		markerRoot1.add( model );
+		model.renderOrder = 1
 		const directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
 		directionalLight.position.set( 1, 2, 1 );
 		directionalLight.castShadow = false
-		directionalLight.target = markerRoot1
-		markerRoot1.add(directionalLight)
-		mixer = new THREE.AnimationMixer( markerRoot1 );
+		directionalLight.target = model
+		model.add(directionalLight)
+		mixer = new THREE.AnimationMixer( model );
 		mixer.clipAction( gltf.animations[ 0 ] ).play();
 
 		console.log("loaded model");
 		
 		animate();
-		let markerControls1 = new THREEx.ArMarkerControls(arToolkitContext, markerRoot1, {
-			type: 'nft',
-			descriptorsUrl : nftUrl,
-			smooth: true,
-			smoothCount:20,
-			smoothToleranc: 0.05,
-			// type: 'pattern', patternUrl: "data/hiro.patt",
-			// changeMatrixMode: 'cameraTransformMatrix'
-		})
-	
-		markerControls1.addEventListener("markerFound", function(ev){
-			console.log("detected......");
-		})
+		
 
 	}, undefined, function ( e ) {
 		console.error( e );
