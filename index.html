@@ -1,233 +1,25 @@
-<!-- <!DOCTYPE html>
-<head>
-	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-	<title>Hello, AR Cube!</title>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r126/three.min.js" integrity="sha512-n8IpKWzDnBOcBhRlHirMZOUvEq2bLRMuJGjuVqbzUJwtTsgwOgK5aS0c1JA647XWYfqvXve8k3PtZdzpipFjgg==" crossorigin="anonymous"></script>
-	<script src="js/ar-nft.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.min.js"></script>
-	<script src="https://unpkg.com/three@0.126.0/examples/js/loaders/GLTFLoader.js"></script>
-	<script src="https://unpkg.com/three@0.126.0/examples/js/loaders/DRACOLoader.js"></script>
-</head>
-<style>
-	.arjs-loader {
-	  height: 100%;
-	  width: 100%;
-	  position: absolute;
-	  top: 0;
-	  left: 0;
-	  background-color: rgba(0, 0, 0, 0.8);
-	  z-index: 9999;
-	  display: flex;
-	  justify-content: center;
-	  align-items: center;
-	}
-  
-	.arjs-loader div {
-	  text-align: center;
-	  font-size: 1.25em;
-	  color: white;
-	}
-  </style>
-<body style='margin : 0px; overflow: hidden; font-family: Monospace;'>
-
-
-<script>
-var scene, camera, renderer, clock, deltaTime, totalTime;
-
-var arToolkitSource, arToolkitContext;
-
-var markerRoot1, markerRoot2;
-
-var mesh1;
-var mixer;
-
-const fieldOfView = 60
-const near = 0.1
-const far = 10000
-
-let width  = 640;
-let height = 480;
-let windowWidth  = window.innerWidth;
-let windowHeight = window.innerHeight;
-
-initialize();
-animate();
-
-function initialize()
-{
-	scene = new THREE.Scene();
-
-	let ambientLight = new THREE.AmbientLight( 0xcccccc, 0.5 );
-	ambientLight.castShadow = false
-	scene.add( ambientLight );
-				
-	camera = new THREE.PerspectiveCamera(
-	);
-	scene.add(camera);
-
-	renderer = new THREE.WebGLRenderer({
-		antialias : true,
-		alpha: true,
-		precision: 'mediump',
-	});
-	renderer.setPixelRatio(window.devicePixelRatio)
-	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
-	renderer.setSize( window.innerWidth, window.innerHeight );
-	renderer.domElement.style.position = 'absolute'
-	renderer.domElement.style.top = '0px'
-	renderer.domElement.style.left = '0px'
-	document.body.appendChild( renderer.domElement );
-
-	clock = new THREE.Clock();
-	deltaTime = 0;
-	totalTime = 0;
-
-	arToolkitSource = new THREEx.ArToolkitSource({
-		sourceType : 'webcam',
-		sourceWidth: width,
-        sourceHeight: height,
-	});
-
-	function onResize()
-	{
-		console.log("onResize...")
-        console.log("window-size:", windowWidth, windowHeight);
-        console.log("window-inner-size:", window.innerWidth, window.innerHeight);
-
-        // Update renderer size
-        windowWidth  = window.innerWidth;
-        windowHeight = window.innerHeight;
-        console.log("window-size:", windowWidth, windowHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.setSize(windowWidth, windowHeight);
-		// // Update camera aspect ratio
-        // camera.aspect = windowWidth / windowHeight;
-        // camera.updateProjectionMatrix();
-		camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
-		camera.updateProjectionMatrix()
-        
-        arToolkitSource.onResizeElement()
-        arToolkitSource.copyElementSizeTo(renderer.domElement)
-        if( arToolkitContext.arController !== null ){
-            arToolkitSource.copyElementSizeTo(arToolkitContext.arController.canvas)
-        }
-	}
-
-	arToolkitSource.init(function onReady(){
-		console.log("use a resize to fullscreen mobile devices...");
-        setTimeout(function() {
-            onResize();
-        }, 100);
-	});
-	
-	// handle resize event
-	window.addEventListener('resize', function(){
-		onResize()
-	});
-	
-	////////////////////////////////////////////////////////////
-	// setup arToolkitContext
-	////////////////////////////////////////////////////////////	
-
-	// create atToolkitContext
-	arToolkitContext = new THREEx.ArToolkitContext({
-		detectionMode: 'mono_and_matrix',
-		canvasWidth: width,
-        canvasHeight: height,
-	});
-	
-	// copy projection matrix to camera when initialization complete
-	arToolkitContext.init( function onCompleted(){
-		camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
-		camera.updateProjectionMatrix()
-	});
-
-	////////////////////////////////////////////////////////////
-	// setup markerRoots
-	////////////////////////////////////////////////////////////
-
-	// let nftName = "ramen-1000px";
-	// let nftUrl  = "https://followthedarkside.github.io/arjs-image-tracking-sample/resources/nft/" + nftName;
-	let nftName = "paris-1000px";
-    let nftUrl  = "https://berial42.github.io/resources/nft/" + nftName;
-	console.log(nftUrl);
-
-	// build markerControls
-	markerRoot1 = new THREE.Group()
-	scene.add(markerRoot1)
-	let markerControls1 = new THREEx.ArMarkerControls(arToolkitContext, markerRoot1, {
-		type: 'nft',
-		descriptorsUrl : nftUrl,
-		smooth: true,
-		smoothCount:20,
-		smoothToleranc: 0.05,
-		// type: 'pattern', patternUrl: "data/hiro.patt",
-		// changeMatrixMode: 'cameraTransformMatrix'
-	})
-
-	markerControls1.addEventListener("markerFound", function(ev){
-		console.log("detected......");
-	})
-	
-	const dracoLoader = new THREE.DRACOLoader();
-	dracoLoader.setDecoderPath( 'jsm/libs/draco/gltf/' );
-	
-	const loader = new THREE.GLTFLoader();
-	loader.setDRACOLoader( dracoLoader );
-	loader.load( 'models/LittlestTokyo.glb', function ( gltf ) {		
-		let model = gltf.scene;
-		model.children[0].position.set(150, 0, -150);
-		model.children[0].scale.set( 0.6,0.6,0.6);
-		markerRoot1.add( model );
-		model.renderOrder = 1
-		const directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
-		directionalLight.position.set( 1, 2, 1 );
-		directionalLight.castShadow = false
-		directionalLight.target = model
-		model.add(directionalLight)
-		mixer = new THREE.AnimationMixer( model );
-		mixer.clipAction( gltf.animations[ 0 ] ).play();
-
-		console.log("loaded model");
-		
-		animate();
-		
-
-	}, undefined, function ( e ) {
-		console.error( e );
-	} );
-}
-
-function update()
-{
-	if ( arToolkitSource.ready !== false )
-		arToolkitContext.update( arToolkitSource.domElement );
-}
-
-function render()
-{
-	renderer.render( scene, camera );
-}
-
-function animate()
-{
-	requestAnimationFrame(animate);
-	deltaTime = clock.getDelta();
-	if(mixer){
-		mixer.update(deltaTime)
-	}
-
-	totalTime += deltaTime;
-	update();
-	scene.visible = camera.visible;
-	render();
-}
-</script>
-
-</body>
-</html> -->
 
 <!DOCTYPE html>
+<html>
+    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+    <!-- we import arjs version without NFT but with marker + location based support -->
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <body style="margin : 0px; overflow: hidden;">
+        <a-scene embedded arjs>
+        <a-marker preset="hiro">
+            <!-- we use cors proxy to avoid cross-origin problems ATTENTION! you need to set up your server -->
+            <a-entity
+            position="0 0 0"
+            scale="0.005 0.005 0.005"
+            gltf-model="models/LittlestTokyo.gltf"
+            ></a-entity>
+        </a-marker>
+        <a-entity camera></a-entity>
+        </a-scene>
+    </body>
+</html>
+
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -235,7 +27,7 @@ function animate()
     <title>NFT with AR.js and Three.js</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r126/three.min.js" integrity="sha512-n8IpKWzDnBOcBhRlHirMZOUvEq2bLRMuJGjuVqbzUJwtTsgwOgK5aS0c1JA647XWYfqvXve8k3PtZdzpipFjgg==" crossorigin="anonymous"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/three.js/build/ar-threex.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js"></script> <!-- GSAP for smooth animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js"></script> 
 	<script src="https://unpkg.com/three@0.126.0/examples/js/loaders/GLTFLoader.js"></script>
 	<script src="https://unpkg.com/three@0.126.0/examples/js/loaders/DRACOLoader.js"></script>
 </head>
@@ -354,4 +146,4 @@ function animate()
 	
 	</body>
 </html>
-
+ -->
