@@ -271,13 +271,17 @@ function animate()
 		});
 	
 		var arToolkitSource = new THREEx.ArToolkitSource({
-			sourceType: 'webcam'
+			sourceType: 'webcam',
+			sourceWidth: window.innerWidth,
+			sourceHeight: window.innerHeight,
+			displayWidth: window.innerWidth,
+			displayHeight: window.innerHeight,
 		});
 	
 		arToolkitSource.init(function onReady() {
 			setTimeout(function() {
 				onResize();
-			}, 2000);
+			}, 1000);
 		});
 	
 		window.addEventListener('resize', onResize);
@@ -305,7 +309,7 @@ function animate()
 	
 		arToolkitContext.init(function onCompleted() {
 			camera.projectionMatrix.copy(arToolkitContext.getProjectionMatrix());
-			camera.updateProjectionMatrix()
+			// camera.updateProjectionMatrix()
 		});
 	
 		
