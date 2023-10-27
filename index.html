@@ -243,8 +243,8 @@ function animate()
 
 	<script>
 		var scene = new THREE.Scene();
-		var camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 10000);
-		var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+		var camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 100000);
+		var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, logarithmicDepthBuffer:true });
 		renderer.setSize(window.innerWidth, window.innerHeight);
 		document.body.appendChild(renderer.domElement);
 	
@@ -257,7 +257,7 @@ function animate()
 		loader.load('models/LittlestTokyo.gltf', function (gltf) {
 			model = gltf.scene;
 			model.children[0].position.set(150, 0, -150);
-			model.children[0].scale.set( 1,1,1);
+			model.children[0].scale.set( 0.8,0.8,0.8);
 			if (gltf.animations && gltf.animations.length) {
 				mixer = new THREE.AnimationMixer(gltf.scene);
 				mixer.clipAction(gltf.animations[0]).play();
@@ -272,10 +272,6 @@ function animate()
 	
 		var arToolkitSource = new THREEx.ArToolkitSource({
 			sourceType: 'webcam',
-			sourceWidth: window.innerHeight,
-			sourceHeight: window.innerWidth,
-			displayWidth: window.innerHeight,
-			displayHeight: window.innerWidth,
 		});
 	
 		arToolkitSource.init(function onReady() {
