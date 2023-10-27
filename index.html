@@ -243,7 +243,7 @@ function animate()
 
 	<script>
 		var scene = new THREE.Scene();
-		var camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 100000);
+		var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
 		var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, logarithmicDepthBuffer:true });
 		renderer.setSize(window.innerWidth, window.innerHeight);
 		document.body.appendChild(renderer.domElement);
@@ -256,7 +256,7 @@ function animate()
 		scene.add(marker);
 		loader.load('models/LittlestTokyo.gltf', function (gltf) {
 			model = gltf.scene;
-			model.children[0].position.set(150, 0, -150);
+			model.children[0].position.set(0, 0, 0);
 			model.children[0].scale.set( 0.8,0.8,0.8);
 			if (gltf.animations && gltf.animations.length) {
 				mixer = new THREE.AnimationMixer(gltf.scene);
@@ -303,10 +303,22 @@ function animate()
 			matrixCodeType: '3x3',
 		});
 	
-		arToolkitContext.init(function onCompleted() {
-			camera.projectionMatrix.copy(arToolkitContext.getProjectionMatrix());
-			// camera.updateProjectionMatrix()
-		});
+		// arToolkitContext.init(function onCompleted() {
+		// 	camera.projectionMatrix.copy(arToolkitContext.getProjectionMatrix());
+		// 	// camera.updateProjectionMatrix()
+		// });
+
+		// paste this code in your arToolkitContext.init function
+		arToolkitContext.init(function onCompleted(){
+			let m = arToolkitContext.getProjectionMatrix();
+			let far = 10000;
+			let near = 0.1;
+
+			m.elements[10] = -(far + near) / (far - near);
+			m.elements[14] = -(2 * far * near) / (far - near);
+
+			camera.projectionMatrix.copy(m);
+		})
 	
 		
 		new THREEx.ArMarkerControls(arToolkitContext, marker, {
